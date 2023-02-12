@@ -1,15 +1,25 @@
 ﻿using System.Collections.Generic;
 using System.Security.Principal;
 using System.Text;
+using System.Linq;
 
 namespace Just_Game_Remaster;
 
-
+enum Direction
+{
+    Down,
+    Up,
+    Left,
+    Right,
+}
 internal class Game
 {
-    private readonly GameTimer _gameTimer = new GameTimer();
+    private const int TICK_RATE = 64;
+
+    private readonly GameTimer _gameTimer = GameTimer.CreateByTickRate(TICK_RATE);
     private readonly List<GameObject> _gameObjects = new List<GameObject>();
     private readonly Printer _printer = new Printer();
+    private readonly BulletFactory _bulletFactory = new BulletFactory();
 
     public Game()
     {
@@ -28,15 +38,30 @@ internal class Game
 
         _gameTimer.Start();
 
-        _gameObjects.Add(new Player("some"));
+        _gameObjects.Add(new Player());
+        _gameObjects.Add(new Enemy(Map.WIDTH/2,Map.HEIGHT/2));
 
         while (true) {
 
-            ProcessInputs();
+            Thread.Sleep(20);
+
+            if (_gameTimer.TickReady()) Tick();
 
             _printer.PrintFrame(_gameObjects);
 
+
+
         }
+
+    }
+
+    private void Tick() {
+
+        ProcessInputs();
+
+        foreach (var gameObject in _gameObjects) gameObject.Tick();
+
+        TickBullets();
 
     }
 
@@ -51,32 +76,71 @@ internal class Game
         switch (key.Key)
         {
             case ConsoleKey.DownArrow:
-                player.Y += 1;
-                NoWalkingOnBorder(1);
+                Move(Direction.Down);
                 break;
             case ConsoleKey.UpArrow:
-                player.Y -= 1;
-                NoWalkingOnBorder(2);
+                Move(Direction.Up);
                 break;
             case ConsoleKey.LeftArrow:
-                NoWalkingOnBorder(3);
-                player.X -= 1;
+                Move(Direction.Left);
                 break;
             case ConsoleKey.RightArrow:
-                NoWalkingOnBorder(4);
-                player.X += 1;
+                Move(Direction.Right);
                 break;
-            default:
+            case ConsoleKey.W:
+                TryShoot(player, Direction.Up);
+                break;
+            case ConsoleKey.S:
+                TryShoot(player, Direction.Down);
+                break;
+            case ConsoleKey.A:
+                TryShoot(player, Direction.Left);
+                break;
+            case ConsoleKey.D:
+                TryShoot(player, Direction.Right);
                 break;
         }
     }
-    private void NoWalkingOnBorder(int direction)
+
+    private void TryShoot(GameObject gameObject, Direction direction) {
+
+        var bullet = _bulletFactory.TryCreateBullet(gameObject, direction);
+
+        if (bullet is null) return;
+        
+        _gameObjects.Add(bullet);
+
+    }
+
+    private void Move(Direction direction)
     {
         var player = _gameObjects.Single(x => x is Player);
-        switch (direction)
-        {
-            case 1:
-                break;
+        if (BorderChecker.WillBeInBounds(player, direction)) {
+            player.Move(direction);
         }
+    }
+  
+    private void TickBullets()
+    {
+        var bullets = _gameObjects.OfType<Bullet>().ToList();
+        var enemies = _gameObjects.OfType<Enemy>().ToList();
+
+        if (bullets?.Any() != true) return;
+
+        foreach (var bullet in bullets) {
+            if (!BorderChecker.IsInBounds(bullet)) _gameObjects.Remove(bullet);
+            foreach(var enemy in enemies) {
+                if(enemy.X == bullet.X && enemy.Y == bullet.Y) {
+                _gameObjects.Remove(enemy); SpawnEnemyRandomPos();
+                }
+            }
+        }
+    }
+    private void SpawnEnemyRandomPos()
+    {
+        Random random = new Random();
+        int x = random.Next(1,Map.WIDTH - 1);
+        int y = random.Next(1, Map.HEIGHT - 1);
+        _gameObjects.Add(new Enemy(x, y));
     }
 }

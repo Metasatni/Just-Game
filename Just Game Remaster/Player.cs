@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 namespace Just_Game_Remaster;
 
 internal class Player : GameObject {
-
-    public string? Name { get; set; }
+    public override void Tick()
+    {
+        
+    }
 
     public override char Character => 'X';
 
-    public Player (string? name)
+    public Player()
     {
-        this.Name = name;
         this.X = 1;
         this.Y = 1;
     }
-
 }

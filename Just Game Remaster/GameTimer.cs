@@ -8,14 +8,21 @@ namespace Just_Game_Remaster;
 
 internal class GameTimer {
 
-  private const int TICK_RATE = 32;
   private const int MS_IN_SECOND = 1000;
-  private const int TICK_IN_MS = MS_IN_SECOND / TICK_RATE;
-
+  private readonly int _delayInMs;
   private long _lastTick;
 
-  public GameTimer() {
+  private GameTimer(int delayInMs) {
+    _delayInMs = delayInMs;
+  }
 
+  public static GameTimer CreateByTickRate(int tickRate) {
+    int delayInMs = MS_IN_SECOND / tickRate;
+    return new GameTimer(delayInMs);
+  }
+
+  public static GameTimer CreateByMs(int delayInMs) {
+    return new GameTimer(delayInMs);
   }
 
   public void Start() {
@@ -24,7 +31,7 @@ internal class GameTimer {
 
   public bool TickReady() {
     long timePassed = GetCurrentMiliseconds() - _lastTick;
-    bool isTickReady = timePassed > TICK_IN_MS;
+    bool isTickReady = timePassed > _delayInMs;
     if (isTickReady) ResetDeltaTime();
     return isTickReady;
   }
