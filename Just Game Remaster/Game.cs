@@ -2,6 +2,7 @@
 using System.Security.Principal;
 using System.Text;
 using System.Linq;
+using System;
 
 namespace Just_Game_Remaster;
 
@@ -17,9 +18,12 @@ internal class Game
     private const int TICK_RATE = 64;
 
     private readonly GameTimer _gameTimer = GameTimer.CreateByTickRate(TICK_RATE);
-    private readonly List<GameObject> _gameObjects = new List<GameObject>();
+    private readonly GameObjects _gameObjects = new GameObjects();
     private readonly Printer _printer = new Printer();
     private readonly BulletFactory _bulletFactory = new BulletFactory();
+    private readonly GameObjectFactory _gameObjectFactory = new GameObjectFactory();
+
+    private const int DamageFromEnemy = 49;  // do wyrzucenia potem do enemy
 
     public Game()
     {
@@ -37,9 +41,8 @@ internal class Game
         SetupConsole();
 
         _gameTimer.Start();
-
-        _gameObjects.Add(new Player());
-        _gameObjects.Add(new Enemy(Map.WIDTH/2,Map.HEIGHT/2));
+        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Player));
+        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
 
         while (true) {
 
@@ -47,9 +50,7 @@ internal class Game
 
             if (_gameTimer.TickReady()) Tick();
 
-            _printer.PrintFrame(_gameObjects);
-
-
+            _printer.PrintFrame(_gameObjects.Get());
 
         }
 
@@ -59,88 +60,88 @@ internal class Game
 
         ProcessInputs();
 
-        foreach (var gameObject in _gameObjects) gameObject.Tick();
+        foreach (var gameObject in _gameObjects.Get().ToList()) gameObject.Tick(_gameObjects);
 
         TickBullets();
-
     }
 
     private void ProcessInputs()
     {
+        Projectile projectile;
+        Direction direction;
+
         if (!Console.KeyAvailable) return;
 
         var key = Console.ReadKey(true);
 
-        var player = _gameObjects.Single(x => x is Player);
-
         switch (key.Key)
         {
             case ConsoleKey.DownArrow:
-                Move(Direction.Down);
-                break;
             case ConsoleKey.UpArrow:
-                Move(Direction.Up);
-                break;
             case ConsoleKey.LeftArrow:
-                Move(Direction.Left);
-                break;
             case ConsoleKey.RightArrow:
-                Move(Direction.Right);
+                direction = GetDirectionByConsoleKey(key.Key);
+                _gameObjects.Player.TryMove(direction);
                 break;
             case ConsoleKey.W:
-                TryShoot(player, Direction.Up);
-                break;
             case ConsoleKey.S:
-                TryShoot(player, Direction.Down);
-                break;
             case ConsoleKey.A:
-                TryShoot(player, Direction.Left);
-                break;
             case ConsoleKey.D:
-                TryShoot(player, Direction.Right);
+                direction = GetDirectionByConsoleKey(key.Key);
+                if (!_gameObjects.Player.TryShoot(direction, out projectile)) return;
+                _gameObjects.Add(projectile);
                 break;
         }
     }
 
-    private void TryShoot(GameObject gameObject, Direction direction) {
-
-        var bullet = _bulletFactory.TryCreateBullet(gameObject, direction);
-
-        if (bullet is null) return;
-        
-        _gameObjects.Add(bullet);
-
-    }
-
-    private void Move(Direction direction)
-    {
-        var player = _gameObjects.Single(x => x is Player);
-        if (BorderChecker.WillBeInBounds(player, direction)) {
-            player.Move(direction);
-        }
+    private Direction GetDirectionByConsoleKey(ConsoleKey consoleKey) {
+        return consoleKey switch
+        {
+            ConsoleKey.A or ConsoleKey.LeftArrow => Direction.Left,
+            ConsoleKey.D or ConsoleKey.RightArrow => Direction.Right,
+            ConsoleKey.W or ConsoleKey.UpArrow => Direction.Up,
+            ConsoleKey.S or ConsoleKey.DownArrow => Direction.Down,
+            _ => throw new ArgumentException()
+        };
     }
   
     private void TickBullets()
     {
-        var bullets = _gameObjects.OfType<Bullet>().ToList();
-        var enemies = _gameObjects.OfType<Enemy>().ToList();
+        var projectiles = _gameObjects.Get<Projectile>();
+        var enemies = _gameObjects.Get<Enemy>();
+        var player = _gameObjects.Player;
+        if (projectiles?.Any() != true) return;
 
-        if (bullets?.Any() != true) return;
-
-        foreach (var bullet in bullets) {
-            if (!BorderChecker.IsInBounds(bullet)) _gameObjects.Remove(bullet);
-            foreach(var enemy in enemies) {
-                if(enemy.X == bullet.X && enemy.Y == bullet.Y) {
-                _gameObjects.Remove(enemy); SpawnEnemyRandomPos();
+        foreach (var projectile in projectiles) {
+            if (!BorderChecker.IsInBounds(projectile)) _gameObjects.Remove(projectile);
+            foreach(var gameObject in enemies) {
+                if(gameObject.X == projectile.X && gameObject.Y == projectile.Y) {
+                    var action = gameObject.OnShot(projectile);
+                    ProcessGameObjectShot(gameObject, action);
                 }
+            }
+            if (player.X == projectile.X && player.Y == projectile.Y)
+            {
+                var action = player.OnShot(projectile);
+                ProcessGameObjectShot(player, action);
             }
         }
     }
-    private void SpawnEnemyRandomPos()
+    private void ProcessGameObjectShot(GameObject gameObject, OnShotAction action)
     {
-        Random random = new Random();
-        int x = random.Next(1,Map.WIDTH - 1);
-        int y = random.Next(1, Map.HEIGHT - 1);
-        _gameObjects.Add(new Enemy(x, y));
+        switch (action)
+        {
+            case OnShotAction.RemoveFromGame:
+                _gameObjects.Remove(gameObject);
+                break;
+            case OnShotAction.Respawn:
+                var newGameObject = _gameObjectFactory.Create(gameObject.Type);
+                _gameObjects.Remove(gameObject);
+                _gameObjects.Add(newGameObject);
+                break;
+            case OnShotAction.DealDamage:
+                _gameObjects.Player.Hp -= DamageFromEnemy;
+                break;
+        }
     }
 }

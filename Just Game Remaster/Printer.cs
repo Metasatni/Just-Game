@@ -32,7 +32,7 @@ internal class Printer {
         map[Map.HEIGHT - 1] = ("+" + new string('-', Map.WIDTH - 2) + "+");
 
       for (int i = 1; i < map.Length - 1; i++) {
-          map[i] = ("|" + new string(' ', Map.WIDTH - 2) + "|");
+          map[i] = ("|" + new string(' ', Map.WIDTH - 2) + "|"); 
       }
 
       for(int i = 0; i < Map.HEIGHT; i++) {

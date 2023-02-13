@@ -7,23 +7,13 @@ using System.Threading.Tasks;
 
 namespace Just_Game_Remaster;
 
-internal class Bullet : GameObject
-{
-    private readonly Direction _direction;
+internal class Bullet : Projectile { 
 
-    public string? Name { get; set; }
     public override char Character => GetCharacter();
-
-    public Bullet(int x, int y, Direction direction)
+    public override GameObjectType Type => GameObjectType.Bullet;
+    public Bullet(int x, int y, Direction direction, GameObjectType shooter)
+        : base(x, y, direction, shooter)
     {
-        this.X = x;
-        this.Y = y;
-        _direction = direction;
-    }
-
-    public override void Tick()
-    {
-        Move(_direction);
 
     }
 

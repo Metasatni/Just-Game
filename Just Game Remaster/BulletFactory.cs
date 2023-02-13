@@ -19,7 +19,7 @@ internal class BulletFactory {
 
         if (_cooldownTimer.TickReady())
         {
-            return new Bullet(gameObject.X, gameObject.Y, direction);
+            return new Bullet(gameObject.X, gameObject.Y, direction, gameObject.Type);
         }
 
         return null;
