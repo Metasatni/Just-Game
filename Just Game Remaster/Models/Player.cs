@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Just_Game_Remaster;
+namespace Just_Game_Remaster.Models;
 
 internal class Player : Shooter
 {
@@ -12,15 +12,14 @@ internal class Player : Shooter
     public override char Character => 'X';
     public override GameObjectType Type => GameObjectType.Player;
     public int Hp { get; set; }
-    public const int ShootDamage = 20;
 
     protected override int _shootingCooldownInMs => 100;
 
     public Player()
     {
-        this.X = 1;
-        this.Y = 1;
-        this.Hp = 100;
+        X = 1;
+        Y = 1;
+        Hp = 100;
     }
 
     public override bool TryShoot(Direction direction, out Projectile projectile)
@@ -29,26 +28,23 @@ internal class Player : Shooter
 
         projectile = null;
 
-        if (canShoot) projectile = new Bullet(this.X, this.Y, direction, this.Type);
+        if (canShoot) projectile = new Bullet(X, Y, direction, Type);
 
         return canShoot;
 
     }
+
     public override void Tick(GameObjects gameObjects)
     {
-        CheckIfAlive(gameObjects);
+
     }
+
     public override OnShotAction OnShot(Projectile projectile)
     {
-        if (projectile.Shooter != GameObjectType.Player) return OnShotAction.DealDamage;
+        if (projectile.Shooter != GameObjectType.Player) Hp -= projectile.Damage;
+        if (Hp <= 0) return OnShotAction.GameEnded;
         return OnShotAction.None;
-    }
-    private void CheckIfAlive(GameObjects gameObjects)
-    {
-        if (this.Hp <= 0)
-        {
-            Thread.Sleep(10000); // tu bedzie kurcze koniec
-        }
+
     }
 
 }

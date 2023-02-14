@@ -4,59 +4,66 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Just_Game_Remaster;
+namespace Just_Game_Remaster.Models;
 
-public enum OnShotAction {
-  None,
-  RemoveFromGame,
-  Respawn,
-  DealDamage
+public enum OnShotAction
+{
+    None,
+    RemoveFromGame,
+    Respawn,
+    GameEnded,
 }
 
-public enum GameObjectType {
-  Player,
-  Enemy,
-  Bullet,
-  Projectile,
+public enum GameObjectType
+{
+    Player,
+    Enemy,
+    Bullet,
+    Projectile,
 }
 
-internal abstract class GameObject {
+internal abstract class GameObject
+{
 
     public int Id { get; set; }
     public int X { get; set; }
     public int Y { get; set; }
     public abstract char Character { get; }
     public abstract GameObjectType Type { get; }
-   
-    public void Move(Direction direction) {
+
+    public void Move(Direction direction)
+    {
         switch (direction)
         {
             case Direction.Down:
-                this.Y++;
+                Y++;
                 break;
             case Direction.Up:
-                this.Y--;
+                Y--;
                 break;
             case Direction.Left:
-                this.X--;
+                X--;
                 break;
             case Direction.Right:
-                this.X++;
+                X++;
                 break;
         }
     }
 
-    public bool TryMove(Direction direction) {
+    public bool TryMove(Direction direction)
+    {
         var canMove = BorderChecker.WillBeInBounds(this, direction);
         if (canMove) Move(direction);
         return canMove;
     }
 
-    public virtual void Tick(GameObjects gameObjects) {
-      
+    public virtual void Tick(GameObjects gameObjects)
+    {
+
     }
 
-    public virtual OnShotAction OnShot(Projectile projectile) {
+    public virtual OnShotAction OnShot(Projectile projectile)
+    {
         return OnShotAction.None;
     }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Just_Game_Remaster.Models;
 
 namespace Just_Game_Remaster;
 
@@ -23,5 +24,6 @@ internal class BulletFactory {
         }
 
         return null;
+        
     }
 }

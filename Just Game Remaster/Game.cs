@@ -3,6 +3,8 @@ using System.Security.Principal;
 using System.Text;
 using System.Linq;
 using System;
+using Just_Game_Remaster.Models;
+using Just_Game_Remaster.Drawing;
 
 namespace Just_Game_Remaster;
 
@@ -19,11 +21,10 @@ internal class Game
 
     private readonly GameTimer _gameTimer = GameTimer.CreateByTickRate(TICK_RATE);
     private readonly GameObjects _gameObjects = new GameObjects();
-    private readonly Printer _printer = new Printer();
+    private readonly IPrinter _printer = new ConsolePrinter();
     private readonly BulletFactory _bulletFactory = new BulletFactory();
     private readonly GameObjectFactory _gameObjectFactory = new GameObjectFactory();
-
-    private const int DamageFromEnemy = 49;  // do wyrzucenia potem do enemy
+    private bool _isRunning = true;
 
     public Game()
     {
@@ -43,14 +44,16 @@ internal class Game
         _gameTimer.Start();
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Player));
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
+        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
+        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
 
-        while (true) {
+         while (_isRunning) {
 
             Thread.Sleep(20);
 
-            if (_gameTimer.TickReady()) Tick();
+            _printer.PrintFrame(_gameObjects);
 
-            _printer.PrintFrame(_gameObjects.Get());
+            if (_gameTimer.TickReady()) Tick();
 
         }
 
@@ -110,6 +113,7 @@ internal class Game
         var projectiles = _gameObjects.Get<Projectile>();
         var enemies = _gameObjects.Get<Enemy>();
         var player = _gameObjects.Player;
+
         if (projectiles?.Any() != true) return;
 
         foreach (var projectile in projectiles) {
@@ -126,7 +130,9 @@ internal class Game
                 ProcessGameObjectShot(player, action);
             }
         }
+
     }
+
     private void ProcessGameObjectShot(GameObject gameObject, OnShotAction action)
     {
         switch (action)
@@ -139,9 +145,18 @@ internal class Game
                 _gameObjects.Remove(gameObject);
                 _gameObjects.Add(newGameObject);
                 break;
-            case OnShotAction.DealDamage:
-                _gameObjects.Player.Hp -= DamageFromEnemy;
-                break;
+            case OnShotAction.GameEnded:
+              EndGame();
+              break;
         }
     }
+
+    public void EndGame()
+    {
+        _printer.DrawGameOverFrame();
+        Thread.Sleep(400);
+        _isRunning = false;
+        Console.ReadKey();
+    }
+
 }

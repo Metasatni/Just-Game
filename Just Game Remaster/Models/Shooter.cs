@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Just_Game_Remaster
+namespace Just_Game_Remaster.Models
 {
 
     internal abstract class Shooter : GameObject
@@ -14,7 +14,8 @@ namespace Just_Game_Remaster
 
         protected abstract int _shootingCooldownInMs { get; }
 
-        public Shooter() {
+        public Shooter()
+        {
             _cooldownTimer = GameTimer.CreateByMs(_shootingCooldownInMs);
             _cooldownTimer.Start();
         }

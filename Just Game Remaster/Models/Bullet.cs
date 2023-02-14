@@ -5,19 +5,24 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Just_Game_Remaster;
+namespace Just_Game_Remaster.Models;
 
-internal class Bullet : Projectile { 
+internal class Bullet : Projectile
+{
 
     public override char Character => GetCharacter();
     public override GameObjectType Type => GameObjectType.Bullet;
+
     public Bullet(int x, int y, Direction direction, GameObjectType shooter)
         : base(x, y, direction, shooter)
     {
 
+        _damage = 20;
+
     }
 
-    private char GetCharacter() {
+    private char GetCharacter()
+    {
         return _direction switch
         {
             Direction.Down or Direction.Up => '|',

@@ -5,9 +5,10 @@ internal class Program
 {
     private static void Main(string[] args)
     {
-        Map map = new Map();
-        Game game = new Game();
-        game.Start();
-        Console.Read();
+        while (true) {
+          Map map = new Map();
+          Game game = new Game();
+          game.Start();
+        }
     }
 }
