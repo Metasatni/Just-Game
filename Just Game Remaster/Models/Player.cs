@@ -36,7 +36,6 @@ internal class Player : Shooter
 
     public override void Tick(GameObjects gameObjects)
     {
-
     }
 
     public override OnShotAction OnShot(Projectile projectile)
@@ -46,5 +45,4 @@ internal class Player : Shooter
         return OnShotAction.None;
 
     }
-
 }

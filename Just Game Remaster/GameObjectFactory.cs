@@ -18,6 +18,7 @@ internal class GameObjectFactory {
           {
               GameObjectType.Player => new Player(),
               GameObjectType.Enemy => new Enemy(0, 0),
+              GameObjectType.Bandage => new Bandage(0, 0),
               _ => null
           };
 

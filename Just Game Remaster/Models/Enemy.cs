@@ -11,9 +11,6 @@ internal class Enemy : Shooter
 {
 
     private Random random = new Random();
-    private GameTimer _cooldownTimer;
-
-    private int _movingCooldownInMs;
     protected override int _shootingCooldownInMs => 1000;
     public override char Character => 'O';
 
@@ -24,8 +21,6 @@ internal class Enemy : Shooter
     {
         X = x;
         Y = y;
-        _cooldownTimer = GameTimer.CreateByMs(_movingCooldownInMs);
-        _cooldownTimer.Start();
     }
 
     public override OnShotAction OnShot(Projectile projectile)
@@ -70,11 +65,8 @@ internal class Enemy : Shooter
         if (CanMove()) Move(direction);
     }
 
-    //protected bool CanMove() => _cooldownTimer.TickReady();
     protected bool CanMove()
     {
         return random.Next(1, 25) == 3;
     }
-
-
 }

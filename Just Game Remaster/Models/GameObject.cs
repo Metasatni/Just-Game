@@ -13,6 +13,12 @@ public enum OnShotAction
     Respawn,
     GameEnded,
 }
+public enum PlayerAction
+{
+    None,
+    Respawn,
+    PickBandage,
+}
 
 public enum GameObjectType
 {
@@ -20,6 +26,7 @@ public enum GameObjectType
     Enemy,
     Bullet,
     Projectile,
+    Bandage,
 }
 
 internal abstract class GameObject

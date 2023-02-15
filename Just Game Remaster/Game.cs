@@ -46,8 +46,9 @@ internal class Game
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
+        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Bandage));
 
-         while (_isRunning) {
+        while (_isRunning) {
 
             Thread.Sleep(20);
 
@@ -66,6 +67,7 @@ internal class Game
         foreach (var gameObject in _gameObjects.Get().ToList()) gameObject.Tick(_gameObjects);
 
         TickBullets();
+        TickPlayer();
     }
 
     private void ProcessInputs()
@@ -107,7 +109,10 @@ internal class Game
             _ => throw new ArgumentException()
         };
     }
-  
+    private void TickPlayer()
+    {
+        if (SteppedOnChecker.IsOnObject(_gameObjects.Player, _gameObjects)) PlayerActions(_gameObjects.Player,PlayerAction.PickBandage);
+    }
     private void TickBullets()
     {
         var projectiles = _gameObjects.Get<Projectile>();
@@ -150,6 +155,22 @@ internal class Game
               break;
         }
     }
+    private void PlayerActions(GameObject gameObject, PlayerAction playerAction)
+    {
+        switch (playerAction)
+        {
+            case PlayerAction.None:
+                break;
+            case PlayerAction.Respawn:
+                var newGameObject = _gameObjectFactory.Create(gameObject.Type);
+                _gameObjects.Remove(gameObject);
+                _gameObjects.Add(newGameObject);
+                break;
+            case PlayerAction.PickBandage:
+                PickBandage();
+                break;
+        }
+    }
 
     public void EndGame()
     {
@@ -158,5 +179,19 @@ internal class Game
         _isRunning = false;
         Console.ReadKey();
     }
-
+    private void PickBandage()
+    {
+        var bandages = _gameObjects.Get<Bandage>();
+        var player = _gameObjects.Player;
+        foreach(var bandage in bandages)
+        {
+            if(bandage.X == player.X && bandage.Y == player.Y)
+            {
+                if(player.Hp < 100) player.Hp += bandage.HealValue;
+                var newGameObject = _gameObjectFactory.Create(bandage.Type);
+                _gameObjects.Remove(bandage);
+                _gameObjects.Add(newGameObject);
+            }
+        }
+    }
 }
