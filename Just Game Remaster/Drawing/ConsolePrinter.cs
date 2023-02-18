@@ -11,7 +11,7 @@ internal class ConsolePrinter : IPrinter
 {
 
     private int _hp;
-    private IEnumerable<GameObject> _gameObjects;
+    private IReadOnlyList<GameObject> _gameObjects;
 
     public void PrintFrame(GameObjects gameObjects)
     {
@@ -43,7 +43,7 @@ internal class ConsolePrinter : IPrinter
     {
 
         _hp = gameObjects.Player.Hp;
-        _gameObjects = gameObjects.Get();
+        _gameObjects = gameObjects.GetAlive();
 
     }
 
@@ -78,6 +78,7 @@ internal class ConsolePrinter : IPrinter
     {
         return $"|{RepeatChar(' ', width - 2)}|";
     }
+
     private void CreateTheEndBorder(int width, int height)
     {
         string endLabel = "THE END";

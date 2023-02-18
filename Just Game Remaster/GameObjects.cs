@@ -21,13 +21,9 @@ internal class GameObjects
 
     }
 
-    public void Remove(GameObject gameObject)
-    {
-        _gameObjects.Remove(gameObject);
-    }
-
     public void Add(GameObject gameObject)
     {
+        if (gameObject is null) return;
         _gameObjects.Add(gameObject);
     }
 
@@ -42,6 +38,26 @@ internal class GameObjects
     {
 
         return _gameObjects;
+
+    }
+
+    public IReadOnlyList<T> GetAlive<T>() where T : GameObject
+    {
+
+        return _gameObjects.Where(x => x.IsDead == false).OfType<T>().Cast<T>().ToList();
+
+    }
+
+    public IReadOnlyList<GameObject> GetAlive()
+    {
+
+        return _gameObjects.Where(x => x.IsDead == false).ToList();
+
+    }
+
+    public void RemoveDeadObjects() {
+    
+        _gameObjects.RemoveAll(x => x.IsDead);
 
     }
 

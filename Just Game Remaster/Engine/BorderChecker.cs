@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Just_Game_Remaster.Models;
 
-namespace Just_Game_Remaster
+namespace Just_Game_Remaster.Engine
 {
     internal static class BorderChecker
     {
@@ -21,7 +21,8 @@ namespace Just_Game_Remaster
             int x = gameObject.X;
             int y = gameObject.Y;
 
-            switch (direction) {
+            switch (direction)
+            {
                 case Direction.Down:
                     y++;
                     break;
@@ -41,9 +42,9 @@ namespace Just_Game_Remaster
         }
 
 
-        private static bool IsInBounds(int x, int y) 
+        private static bool IsInBounds(int x, int y)
         {
-            if ((x < Map.WIDTH - 1) && (x > 0) && (y > 0) && (y < Map.HEIGHT -1)) return true;
+            if (x < Map.WIDTH - 1 && x > 0 && y > 0 && y < Map.HEIGHT - 1) return true;
             return false;
         }
 

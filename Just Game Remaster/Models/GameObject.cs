@@ -3,32 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Just_Game_Remaster.Engine;
+using Just_Game_Remaster.Events;
 
 namespace Just_Game_Remaster.Models;
-
-public enum OnShotAction
-{
-    None,
-    RemoveFromGame,
-    Respawn,
-    GameEnded,
-}
-public enum PlayerAction
-{
-    None,
-    Respawn,
-    PickBandage,
-}
-
-public enum GameObjectType
-{
-    Player,
-    Enemy,
-    Bullet,
-    Projectile,
-    Bandage,
-}
-
 internal abstract class GameObject
 {
 
@@ -37,6 +15,7 @@ internal abstract class GameObject
     public int Y { get; set; }
     public abstract char Character { get; }
     public abstract GameObjectType Type { get; }
+    public bool IsDead { get; set; }
 
     public void Move(Direction direction)
     {
@@ -64,14 +43,8 @@ internal abstract class GameObject
         return canMove;
     }
 
-    public virtual void Tick(GameObjects gameObjects)
-    {
-
-    }
-
-    public virtual OnShotAction OnShot(Projectile projectile)
-    {
-        return OnShotAction.None;
+    public virtual List<IGameEvent> Tick(GameObjects gameObjects) {
+        return new List<IGameEvent>();
     }
 
 }

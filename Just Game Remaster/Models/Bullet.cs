@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Just_Game_Remaster.Engine;
 
 namespace Just_Game_Remaster.Models;
 
@@ -16,9 +11,7 @@ internal class Bullet : Projectile
     public Bullet(int x, int y, Direction direction, GameObjectType shooter)
         : base(x, y, direction, shooter)
     {
-
         _damage = 20;
-
     }
 
     private char GetCharacter()

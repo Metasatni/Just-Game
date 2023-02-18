@@ -4,29 +4,24 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using Just_Game_Remaster.Engine;
+using Just_Game_Remaster.Events;
 
 namespace Just_Game_Remaster.Models;
 
 internal class Enemy : Shooter
 {
 
-    private Random random = new Random();
+    private Random _random = new Random();
     protected override int _shootingCooldownInMs => 1000;
+
     public override char Character => 'O';
-
     public override GameObjectType Type => GameObjectType.Enemy;
-
 
     public Enemy(int x, int y)
     {
-        X = x;
-        Y = y;
-    }
-
-    public override OnShotAction OnShot(Projectile projectile)
-    {
-        if (projectile.Shooter != GameObjectType.Enemy) return OnShotAction.Respawn;
-        return OnShotAction.None;
+        this.X = x;
+        this.Y = y;
     }
 
     public override bool TryShoot(Direction direction, out Projectile projectile)
@@ -41,10 +36,10 @@ internal class Enemy : Shooter
 
     }
 
-    public override void Tick(GameObjects gameObjects)
-    {
+    public override List<IGameEvent> Tick(GameObjects gameObjects) {
         Shoot(gameObjects);
-        TryMoveTowardsObject(gameObjects.Player);
+        TryMoveTowardsObject(gameObjects.Player, gameObjects);
+        return base.Tick(gameObjects);
     }
 
     public void Shoot(GameObjects gameObjects)
@@ -58,15 +53,18 @@ internal class Enemy : Shooter
 
     }
 
-    public void TryMoveTowardsObject(GameObject gameObject)
+    public void TryMoveTowardsObject(GameObject gameObject, GameObjects gameObjects)
     {
         var direction = PathFinder.FindClosestDirection(this, gameObject);
 
-        if (CanMove()) Move(direction);
+        if (CanMove(direction,gameObjects)) Move(direction);
     }
 
-    protected bool CanMove()
+    protected bool CanMove(Direction direction, GameObjects gameObjects)
     {
-        return random.Next(1, 25) == 3;
+        if (this.WillBeOnObject(gameObjects.Get(), direction, out var hitResult)) {
+            if (hitResult is Player) return false;
+        }
+        return _random.Next(1, 25) == 3;
     }
 }
