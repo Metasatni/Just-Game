@@ -21,6 +21,7 @@ public enum GameObjectType
     Bullet,
     Projectile,
     Bandage,
+    Mine,
 }
 
 public static class Enums {

@@ -25,6 +25,7 @@ internal class Game
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
         _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Bandage));
+        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Mine));
 
     }
 

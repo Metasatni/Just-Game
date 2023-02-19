@@ -44,6 +44,15 @@ internal class GameEventsProcessor {
         gameEvent.Item.OnPickUp(gameEvent.GameObject);
         gameEvent.Item.IsDead = true;
         _gameObjects.Add(_gameObjectFactory.Create(gameEvent.Item.Type));
+        switch (gameEvent.GameObject) {
+            case Player player:
+                break;
+            case Enemy enemy:
+                enemy.IsDead = true;
+                _gameObjects.Add(_gameObjectFactory.Create(enemy.Type));
+                break;
+        }
+
     }
 
     private void HandleEvent(GameObjectShotEvent gameEvent) {
