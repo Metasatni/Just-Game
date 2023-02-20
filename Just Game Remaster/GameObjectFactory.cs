@@ -11,6 +11,14 @@ internal class GameObjectFactory {
 
       private readonly Random _random = new Random();
 
+    private readonly GameObjects _gameObjects;
+
+    public GameObjectFactory(GameObjects gameObjects) {
+
+        _gameObjects = gameObjects;
+
+    }
+
       public GameObject Create(GameObjectType gameObjectType)
       {
 

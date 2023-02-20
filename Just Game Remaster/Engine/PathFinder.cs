@@ -7,7 +7,7 @@ using Just_Game_Remaster.Models;
 
 namespace Just_Game_Remaster.Engine;
 
-internal class PathFinder
+internal static class PathFinder
 {
 
     public static Direction FindClosestDirection(GameObject source, GameObject target)

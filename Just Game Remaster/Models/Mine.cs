@@ -10,6 +10,9 @@ namespace Just_Game_Remaster.Models
 {
     internal class Mine : GameItem
     {
+
+        private GameObjects _gameObjects => ServiceProvider.GetService<GameObjects>();
+
         private const int DAMAGE_VALUE = 20;
         public override char Character => '@';
         public override GameObjectType Type => GameObjectType.Mine;
@@ -36,7 +39,7 @@ namespace Just_Game_Remaster.Models
         public override void OnPickUp(GameObject gameObject)
         {
             if (gameObject is Player player) player.Hp -= DAMAGE_VALUE;
-            //if (gameObject is Enemy enemy) enemy.Hp -= DAMAGE_VALUE;
+            _gameObjects.Add(gameObject);
            
         }
     }

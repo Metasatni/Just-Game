@@ -1,16 +1,16 @@
 ﻿using Just_Game_Remaster;
-using Just_Game_Remaster.Engine;
-using System.Security.Cryptography.X509Certificates;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
-internal class Program
-{
+using IHost host = CreateHostBuilder().Build();
 
-    private static void Main(string[] args) {
-        while (true) {
-            Map map = new Map();
-            Game game = new Game();
-            game.Start();
-        }
-    }
+await host.RunAsync();
 
+IHostBuilder CreateHostBuilder() {
+    return Host.CreateDefaultBuilder(args).ConfigureServices(ConfigureServices);
+}
+
+void ConfigureServices(IServiceCollection services) {
+    services.AddHostedService<Startup>();
+    services.AddSingleton<GameObjects>();
 }
