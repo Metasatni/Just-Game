@@ -1,6 +1,4 @@
-﻿using Just_Game_Remaster.Engine;
-
-namespace Just_Game_Remaster.Models;
+﻿namespace Just_Game_Remaster.Models;
 
 internal class Bullet : Projectile
 {

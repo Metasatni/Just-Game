@@ -1,5 +1,4 @@
 ﻿using Just_Game_Remaster.Drawing;
-using Just_Game_Remaster.Models;
 
 namespace Just_Game_Remaster.Engine;
 
