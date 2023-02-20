@@ -8,24 +8,22 @@ internal class Game
     private const int TICK_RATE = 64;
 
     private readonly GameTimer _gameTimer = GameTimer.CreateByTickRate(TICK_RATE);
-    private readonly GameObjects _gameObjects = new GameObjects();
     private readonly IPrinter _printer = new ConsolePrinter();
-    private readonly BulletFactory _bulletFactory = new BulletFactory();
-    private readonly GameObjectFactory _gameObjectFactory = new GameObjectFactory();
-    private readonly GameEventsProcessor _gameEventsProcessor;
+    private GameObjects _gameObjects => ServiceProvider.GetService<GameObjects>();
+    private GameObjectsSpawner _gameObjectsSpawner => ServiceProvider.GetService<GameObjectsSpawner>();
 
     public Game() {
-        _gameEventsProcessor = new GameEventsProcessor(_gameObjects);
+        _gameObjects.Clear();
     }
 
     private void CreateStartModels()
     {
-        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Player));
-        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
-        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
-        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Enemy));
-        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Bandage));
-        _gameObjects.Add(_gameObjectFactory.Create(GameObjectType.Mine));
+        _gameObjectsSpawner.SpawnPlayer();
+        _gameObjectsSpawner.SpawnEnemy();
+        _gameObjectsSpawner.SpawnEnemy();
+        _gameObjectsSpawner.SpawnEnemy();
+        _gameObjectsSpawner.SpawnBandage();
+        _gameObjectsSpawner.SpawnMine();
 
     }
 
@@ -38,6 +36,7 @@ internal class Game
 
     public void Start()
     {
+
         SetupConsole();
 
         CreateStartModels();
@@ -67,8 +66,7 @@ internal class Game
     {
 
         foreach (var gameObject in _gameObjects.Get().ToList()) {
-            var events = gameObject.Tick(_gameObjects);
-            _gameEventsProcessor.HandleEvents(events);
+            gameObject.Tick();
         }
 
         _gameObjects.RemoveDeadObjects();

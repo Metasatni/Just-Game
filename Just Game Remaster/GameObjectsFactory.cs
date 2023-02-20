@@ -7,13 +7,13 @@ using Just_Game_Remaster.Models;
 
 namespace Just_Game_Remaster;
 
-internal class GameObjectFactory {
+internal class GameObjectsFactory {
 
       private readonly Random _random = new Random();
 
     private readonly GameObjects _gameObjects;
 
-    public GameObjectFactory(GameObjects gameObjects) {
+    public GameObjectsFactory(GameObjects gameObjects) {
 
         _gameObjects = gameObjects;
 
@@ -22,7 +22,7 @@ internal class GameObjectFactory {
       public GameObject Create(GameObjectType gameObjectType)
       {
 
-          GameObject? gameObject = gameObjectType switch
+          GameObject gameObject = gameObjectType switch
           {
               GameObjectType.Player => new Player(),
               GameObjectType.Enemy => new Enemy(0, 0),

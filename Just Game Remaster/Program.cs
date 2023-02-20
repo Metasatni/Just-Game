@@ -13,4 +13,6 @@ IHostBuilder CreateHostBuilder() {
 void ConfigureServices(IServiceCollection services) {
     services.AddHostedService<Startup>();
     services.AddSingleton<GameObjects>();
+    services.AddSingleton<GameObjectsFactory>();
+    services.AddSingleton<GameObjectsSpawner>();
 }

@@ -9,6 +9,8 @@ using Just_Game_Remaster.Events;
 namespace Just_Game_Remaster.Models;
 internal abstract class GameObject
 {
+    protected GameObjectsSpawner _spawner => ServiceProvider.GetService<GameObjectsSpawner>();
+    protected GameObjects _gameObjects => ServiceProvider.GetService<GameObjects>();
 
     public int Id { get; set; }
     public int X { get; set; }
@@ -35,8 +37,16 @@ internal abstract class GameObject
         return canMove;
     }
 
-    public virtual List<IGameEvent> Tick(GameObjects gameObjects) {
-        return new List<IGameEvent>();
+    public virtual void Tick() {
+
+    }
+
+    public virtual void OnShot(Projectile projectile) {
+
+    }
+
+    public virtual void OnItemPickUp(GameItem gameItem) {
+
     }
 
 }

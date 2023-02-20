@@ -16,12 +16,15 @@ internal class GameObjects
 
     public GameObjects()
     {
-
         _gameObjects = new List<GameObject>();
-
     }
 
-    public void Add(GameObject gameObject)
+    public void Clear()
+    {
+        _gameObjects.Clear();
+    }
+
+    public void Add(GameObject? gameObject)
     {
         if (gameObject is null) return;
         _gameObjects.Add(gameObject);
