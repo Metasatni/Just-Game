@@ -21,18 +21,10 @@ internal abstract class GameObject
     {
         switch (direction)
         {
-            case Direction.Down:
-                Y++;
-                break;
-            case Direction.Up:
-                Y--;
-                break;
-            case Direction.Left:
-                X--;
-                break;
-            case Direction.Right:
-                X++;
-                break;
+            case Direction.Down: Y++; break;
+            case Direction.Up: Y--; break;
+            case Direction.Left: X--; break;
+            case Direction.Right: X++; break;
         }
     }
 

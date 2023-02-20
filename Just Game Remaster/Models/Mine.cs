@@ -36,6 +36,7 @@ namespace Just_Game_Remaster.Models
         public override void OnPickUp(GameObject gameObject)
         {
             if (gameObject is Player player) player.Hp -= DAMAGE_VALUE;
+            //if (gameObject is Enemy enemy) enemy.Hp -= DAMAGE_VALUE;
            
         }
     }

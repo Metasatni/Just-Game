@@ -11,7 +11,6 @@ namespace Just_Game_Remaster.Models;
 
 internal class Enemy : Shooter
 {
-
     private Random _random = new Random();
     protected override int _shootingCooldownInMs => 1000;
 
@@ -42,18 +41,16 @@ internal class Enemy : Shooter
         return base.Tick(gameObjects);
     }
 
-    public void Shoot(GameObjects gameObjects)
+    private void Shoot(GameObjects gameObjects)
     {
-
         var direction = PathFinder.FindClosestDirection(this, gameObjects.Player);
 
         if (!TryShoot(direction, out var projectile)) return;
 
         gameObjects.Add(projectile);
-
     }
 
-    public void TryMoveTowardsObject(GameObject gameObject, GameObjects gameObjects)
+    private void TryMoveTowardsObject(GameObject gameObject, GameObjects gameObjects)
     {
         var direction = PathFinder.FindClosestDirection(this, gameObject);
 
@@ -67,4 +64,5 @@ internal class Enemy : Shooter
         }
         return _random.Next(1, 25) == 3;
     }
+
 }
