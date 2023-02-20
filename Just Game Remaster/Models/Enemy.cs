@@ -17,46 +17,44 @@ internal class Enemy : Shooter
         this.Y = y;
     }
 
-    public override bool TryShoot(Direction direction, out Projectile projectile)
+    public override void Tick() {
+        Shoot();
+        TryMoveTowardsObject(_gameObjects.Player);
+    }
+
+    private void Shoot()
     {
-        bool canShoot = CanShoot();
+        var direction = PathFinder.FindClosestDirection(this, _gameObjects.Player);
 
-        projectile = null;
-
-        if (canShoot) projectile = new Bullet(X, Y, direction, Type);
-
-        return canShoot;
-
+        if (CanShoot()) _spawner.SpawnBullet(this, direction);
     }
 
-    public override List<IGameEvent> Tick(GameObjects gameObjects) {
-        Shoot(gameObjects);
-        TryMoveTowardsObject(gameObjects.Player, gameObjects);
-        return base.Tick(gameObjects);
-    }
-
-    private void Shoot(GameObjects gameObjects)
-    {
-        var direction = PathFinder.FindClosestDirection(this, gameObjects.Player);
-
-        if (!TryShoot(direction, out var projectile)) return;
-
-        gameObjects.Add(projectile);
-    }
-
-    private void TryMoveTowardsObject(GameObject gameObject, GameObjects gameObjects)
+    private void TryMoveTowardsObject(GameObject gameObject)
     {
         var direction = PathFinder.FindClosestDirection(this, gameObject);
 
-        if (CanMove(direction,gameObjects)) Move(direction);
+        if (CanMove(direction)) Move(direction);
     }
 
-    protected bool CanMove(Direction direction, GameObjects gameObjects)
+    protected bool CanMove(Direction direction)
     {
-        if (this.WillBeOnObject(gameObjects.Get(), direction, out var hitResult)) {
+        if (this.WillBeOnObject(_gameObjects.Get(), direction, out var hitResult)) {
             if (hitResult is Player) return false;
         }
         return _random.Next(1, 25) == 3;
     }
 
-}
+    public override void OnShot(Projectile projectile) {
+        this.IsDead = true;
+        _spawner.SpawnEnemy();
+    }
+
+    public override void OnItemPickUp(GameItem gameItem) {
+        switch (gameItem) {
+            case Mine mine:
+                this.IsDead = true;
+                _spawner.SpawnEnemy();
+                break;
+        }
+    }
+ } 

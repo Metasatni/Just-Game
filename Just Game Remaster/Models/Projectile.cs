@@ -13,7 +13,11 @@ internal abstract class Projectile : GameObject
     public override char Character => '.';
     public GameObjectType Shooter => _shooter;
 
-    public Projectile(int x, int y, Direction direction, GameObjectType shooter)
+    public Projectile(GameObject gameObject, Direction direction)
+        : this(gameObject.X, gameObject.Y, direction, gameObject.Type) {
+    }
+
+    private Projectile(int x, int y, Direction direction, GameObjectType shooter)
     {
         this.X = x;
         this.Y = y;
@@ -22,24 +26,25 @@ internal abstract class Projectile : GameObject
         _damage = 0;
     }
 
-    public override List<IGameEvent> Tick(GameObjects gameObjects)
+    public override void Tick()
     {
         var gameEvents = new List<IGameEvent>();
         Move(_direction);
-        if (IsOutOfBounds(gameObjects)) return null;
-        TryAddObjectShotEvent(gameEvents, gameObjects);
-        return gameEvents;
+        if (IsOutOfBounds()) base.Tick();
+        TryAddObjectShotEvent(gameEvents);
     }
 
-    private bool IsOutOfBounds(GameObjects gameObjects) {
+    private bool IsOutOfBounds() {
         if (BorderChecker.IsInBounds(this)) return false;
         base.IsDead = true;
         return true;
     }
 
-    private void TryAddObjectShotEvent(List<IGameEvent> gameEvents, GameObjects gameObjects) {
-        if (!this.IsOnObject(gameObjects, out var target)) return;
-        gameEvents.Add(new GameObjectShotEvent(this, target));
+    private void TryAddObjectShotEvent(List<IGameEvent> gameEvents) {
+        if (!this.IsOnObject(_gameObjects, out var target)) return;
+        target.OnShot(this);
     }
+    
+    
 
 }

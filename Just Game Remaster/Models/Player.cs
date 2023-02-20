@@ -28,21 +28,8 @@ internal class Player : Shooter
         _movingCooldownTimer.Start();
     }
 
-    public override bool TryShoot(Direction direction, out Projectile projectile)
-    {
-        bool canShoot = CanShoot();
-
-        projectile = null;
-
-        if (canShoot) projectile = new Bullet(X, Y, direction, Type);
-
-        return canShoot;
-
-    }
-
-    public override List<IGameEvent> Tick(GameObjects gameObjects) {
-        ProcessInputs(gameObjects);
-        return base.Tick(gameObjects);
+    public override void Tick() {
+        ProcessInputs();
     }
 
     public override bool TryMove(Direction direction) {
@@ -53,22 +40,38 @@ internal class Player : Shooter
 
     }
 
-    private void ProcessInputs(GameObjects gameObjects) {
-
-        Projectile? projectile = null;
-
-        if (Keyboard.IsKeyDown(ConsoleKey.W)) TryShoot(Direction.Up, out projectile);
-        if (Keyboard.IsKeyDown(ConsoleKey.S)) TryShoot(Direction.Down, out projectile);
-        if (Keyboard.IsKeyDown(ConsoleKey.A)) TryShoot(Direction.Left, out projectile);
-        if (Keyboard.IsKeyDown(ConsoleKey.D)) TryShoot(Direction.Right, out projectile);
-
-        if (projectile is not null) gameObjects.Add(projectile);
-
+    private void ProcessInputs() {
         if (Keyboard.IsKeyDown(ConsoleKey.UpArrow)) TryMove(Direction.Up);
         if (Keyboard.IsKeyDown(ConsoleKey.DownArrow)) TryMove(Direction.Down);
         if (Keyboard.IsKeyDown(ConsoleKey.LeftArrow)) TryMove(Direction.Left);
         if (Keyboard.IsKeyDown(ConsoleKey.RightArrow)) TryMove(Direction.Right);
+        if (Keyboard.IsKeyDown(ConsoleKey.W)) TryShoot(Direction.Up);
+        if (Keyboard.IsKeyDown(ConsoleKey.S)) TryShoot(Direction.Down);
+        if (Keyboard.IsKeyDown(ConsoleKey.A)) TryShoot(Direction.Left);
+        if (Keyboard.IsKeyDown(ConsoleKey.D)) TryShoot(Direction.Right);
+    }
 
+    private void TryShoot(Direction direction) {
+        if (CanShoot()) _spawner.SpawnBullet(this, direction);
+    }
+
+    public override void OnShot(Projectile projectile) {
+        this.Hp -= projectile.Damage;
+    }
+
+    public override void OnItemPickUp(GameItem gameItem) {
+        switch (gameItem) {
+            case Bandage bandage:
+                this.Hp += bandage.HealValue;
+                gameItem.IsDead = true;
+                _spawner.SpawnBandage();
+                break;
+            case Mine mine:
+                this.Hp -= mine.Damage;
+                gameItem.IsDead = true;
+                _spawner.SpawnMine();
+                break;
+        }
     }
 
 }

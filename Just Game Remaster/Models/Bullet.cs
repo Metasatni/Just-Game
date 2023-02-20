@@ -4,14 +4,14 @@ namespace Just_Game_Remaster.Models;
 
 internal class Bullet : Projectile
 {
-
     public override char Character => GetCharacter();
     public override GameObjectType Type => GameObjectType.Bullet;
 
-    public Bullet(int x, int y, Direction direction, GameObjectType shooter)
-        : base(x, y, direction, shooter)
-    {
+    public Bullet(GameObject gameObject, Direction direction)
+        : base(gameObject, direction) {
+
         _damage = 20;
+
     }
 
     private char GetCharacter()

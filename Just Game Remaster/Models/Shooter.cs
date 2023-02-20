@@ -22,6 +22,6 @@ internal abstract class Shooter : GameObject
 
     protected bool CanShoot() => _cooldownTimer.TickReady();
 
-    public abstract bool TryShoot(Direction direction, out Projectile projectile);
+    //public abstract bool TryShoot(Direction direction, out Projectile projectile);
 
 }
