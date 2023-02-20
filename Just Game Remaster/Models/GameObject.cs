@@ -36,7 +36,7 @@ internal abstract class GameObject
         }
     }
 
-    public bool TryMove(Direction direction)
+    public virtual bool TryMove(Direction direction)
     {
         var canMove = BorderChecker.WillBeInBounds(this, direction);
         if (canMove) Move(direction);

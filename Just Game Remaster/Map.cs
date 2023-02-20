@@ -12,7 +12,7 @@ namespace Just_Game_Remaster
         public const int WIDTH = 80;
         public const int HEIGHT = 20;
         public bool[][] MapStructure { get; private set; }
-        
+         
         public Map()
         {
             GenerateMap();

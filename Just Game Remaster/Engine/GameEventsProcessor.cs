@@ -32,7 +32,6 @@ internal class GameEventsProcessor {
 
         switch (gameEvent) {
           case GameObjectShotEvent gameObjectShotEvent: HandleEvent(gameObjectShotEvent); return;
-          case OnPlayerInputEvent onPlayerInputEvent: HandleEvent(onPlayerInputEvent); break;
           case ItemPickUpEvent itemPickUpEvent: HandleEvent(itemPickUpEvent); break;
         }
 
@@ -65,30 +64,6 @@ internal class GameEventsProcessor {
                 enemy.IsDead = true;
                 _gameObjects.Add(_gameObjectFactory.Create(enemy.Type));
                 break;
-        }
-    }
-
-    private void HandleEvent(OnPlayerInputEvent gameEvent) {
-        Direction direction;
-        switch (gameEvent.Key)
-        {
-            case ConsoleKey.DownArrow:
-            case ConsoleKey.UpArrow:
-            case ConsoleKey.LeftArrow:
-            case ConsoleKey.RightArrow:
-                direction = Enums.GetDirectionByConsoleKey(gameEvent.Key);
-                _gameObjects.Player.TryMove(direction);
-                break;
-            case ConsoleKey.W:
-            case ConsoleKey.S:
-            case ConsoleKey.A:
-            case ConsoleKey.D:
-                direction = Enums.GetDirectionByConsoleKey(gameEvent.Key);
-                if (!_gameObjects.Player.TryShoot(direction, out var projectile)) return;
-                _gameObjects.Add(projectile);
-                break;
-            default:
-              return;
         }
     }
 
