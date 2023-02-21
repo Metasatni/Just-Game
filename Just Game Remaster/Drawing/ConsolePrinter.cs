@@ -30,6 +30,21 @@ internal class ConsolePrinter : IPrinter
 
     private void WriteGameObject(GameObject gameObject)
     {
+        switch (gameObject)
+        {
+            case Enemy:
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                break;
+            case Player:
+                Console.ForegroundColor = ConsoleColor.White;
+                break;
+            case Bandage:
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                break;
+            case Mine:
+                Console.ForegroundColor = ConsoleColor.Black;
+                break;
+        }
         Console.SetCursorPosition(gameObject.X, gameObject.Y);
         Console.Write(gameObject.Character);
     }

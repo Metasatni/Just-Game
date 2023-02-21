@@ -44,6 +44,7 @@ internal class Enemy : Shooter
     }
 
     public override void OnShot(Projectile projectile) {
+        if(projectile.Shooter == GameObjectType.Enemy) return;
         this.IsDead = true;
         _spawner.SpawnEnemy();
     }
@@ -51,6 +52,8 @@ internal class Enemy : Shooter
     public override void OnItemPickUp(GameItem gameItem) {
         switch (gameItem) {
             case Mine mine:
+                gameItem.IsDead = true;
+                _spawner.SpawnMine();
                 this.IsDead = true;
                 _spawner.SpawnEnemy();
                 break;

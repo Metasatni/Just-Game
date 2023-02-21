@@ -27,10 +27,9 @@ internal abstract class Projectile : GameObject
 
     public override void Tick()
     {
-        var gameEvents = new List<IGameEvent>();
         Move(_direction);
         if (IsOutOfBounds()) base.Tick();
-        TryAddObjectShotEvent(gameEvents);
+        TryAddObjectShotEvent();
     }
 
     private bool IsOutOfBounds() {
@@ -39,7 +38,7 @@ internal abstract class Projectile : GameObject
         return true;
     }
 
-    private void TryAddObjectShotEvent(List<IGameEvent> gameEvents) {
+    private void TryAddObjectShotEvent() {
         if (!this.IsOnObject(_gameObjects, out var target)) return;
         target.OnShot(this);
     }
