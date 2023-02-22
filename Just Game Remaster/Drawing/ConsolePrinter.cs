@@ -44,6 +44,9 @@ internal class ConsolePrinter : IPrinter
             case Mine:
                 Console.ForegroundColor = ConsoleColor.Black;
                 break;
+            case Bullet:
+                Console.ForegroundColor = ConsoleColor.Black;
+                break;
         }
         Console.SetCursorPosition(gameObject.X, gameObject.Y);
         Console.Write(gameObject.Character);
@@ -59,7 +62,7 @@ internal class ConsolePrinter : IPrinter
 
     private void RedrawEmptyMap()
     {
-
+        Console.ForegroundColor = ConsoleColor.Black;
         int width = Map.WIDTH;
         int height = Map.HEIGHT;
 
